@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Repository Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        h2 {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #4CAF50;
+        }
+
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .error {
+            background-color: #ffebee;
+            border-color: #f44336;
+            color: #c62828;
+        }
+
+        .repo-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #fafafa;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .repo-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .repo-desc {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .repo-info {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .repo-link {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .repo-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GitHub Repository Viewer</h1>
+
+        <div class="section">
+            <h2>Search Repositories by Username</h2>
+            <form id="reposForm">
+                <div class="form-group">
+                    <label for="username1">GitHub Username:</label>
+                    <input type="text" id="username1" placeholder="Enter username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="language">Filter by Language:</label>
+                    <input type="text" id="language" placeholder="e.g., JavaScript, Python">
+                </div>
+
+                <div class="form-group">
+                    <label for="min_stars">Minimum Stars:</label>
+                    <input type="number" id="min_stars" placeholder="e.g., 100">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="exclude_forks">
+                        Exclude Forks
+                    </label>
+                </div>
+
+                <button type="submit">Search Repositories</button>
+            </form>
+
+            <div id="loading1" class="loading">Loading...</div>
+            <div id="output1"></div>
+        </div>
+
+        <div class="section">
+            <h2>Get Repository Details</h2>
+            <form id="detailsForm">
+                <div class="form-group">
+                    <label for="username2">GitHub Username:</label>
+                    <input type="text" id="username2" placeholder="Enter username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="repo">Repository Name:</label>
+                    <input type="text" id="repo" placeholder="Enter repository name" required>
+                </div>
+
+                <button type="submit">Get Details</button>
+            </form>
+
+            <div id="loading2" class="loading">Loading...</div>
+            <div id="output2"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('reposForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var username = document.getElementById('username1').value;
+            var language = document.getElementById('language').value;
+            var minStars = document.getElementById('min_stars').value;
+            var excludeForks = document.getElementById('exclude_forks').checked;
+
+            var params = [];
+            if (language) params.push('language=' + language);
+            if (minStars) params.push('min_stars=' + minStars);
+            if (excludeForks) params.push('exclude_forks=true');
+
+            var url = '/api/repos/' + username;
+            if (params.length > 0) {
+                url = url + '?' + params.join('&');
+            }
+
+            document.getElementById('loading1').style.display = 'block';
+            document.getElementById('output1').innerHTML = '';
+
+            fetch(url, { method: 'GET' })
+                .then(function(response) {
+                    return response.json().then(function(data) {
+                        return { status: response.status, data: data };
+                    });
+                })
+                .then(function(result) {
+                    document.getElementById('loading1').style.display = 'none';
+
+                    if (result.status !== 200) {
+                        document.getElementById('output1').innerHTML = '<div class="output error">Error: ' + result.data.error + '</div>';
+                        return;
+                    }
+
+                    if (result.data.repositories && result.data.repositories.length > 0) {
+                        var html = '<div class="output">';
+                        html += '<p><strong>Found ' + result.data.count + ' repositories for ' + result.data.username + '</strong></p>';
+                        
+                        result.data.repositories.forEach(function(repo) {
+                            html += '<div class="repo-item">';
+                            html += '<div class="repo-name">' + repo.name + '</div>';
+                            html += '<div class="repo-desc">' + (repo.description || 'No description') + '</div>';
+                            html += '<div class="repo-info">Stars: ' + repo.stars + ' | Forks: ' + repo.forks + ' | Language: ' + (repo.language || 'N/A') + '</div>';
+                            html += '<a href="' + repo.url + '" target="_blank" class="repo-link">View on GitHub</a>';
+                            html += '</div>';
+                        });
+                        
+                        html += '</div>';
+                        document.getElementById('output1').innerHTML = html;
+                    } else {
+                        document.getElementById('output1').innerHTML = '<div class="output">No repositories found</div>';
+                    }
+                })
+                .catch(function(error) {
+                    document.getElementById('loading1').style.display = 'none';
+                    document.getElementById('output1').innerHTML = '<div class="output error">Error: ' + error.message + '</div>';
+                });
+        });
+
+        document.getElementById('detailsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var username = document.getElementById('username2').value;
+            var repo = document.getElementById('repo').value;
+
+            var url = '/api/repos/' + username + '/' + repo;
+
+            document.getElementById('loading2').style.display = 'block';
+            document.getElementById('output2').innerHTML = '';
+
+            fetch(url, { method: 'GET' })
+                .then(function(response) {
+                    return response.json().then(function(data) {
+                        return { status: response.status, data: data };
+                    });
+                })
+                .then(function(result) {
+                    document.getElementById('loading2').style.display = 'none';
+
+                    if (result.status !== 200) {
+                        document.getElementById('output2').innerHTML = '<div class="output error">Error: ' + result.data.error + '</div>';
+                        return;
+                    }
+
+                    var repo = result.data;
+                    var html = '<div class="output">';
+                    html += '<div class="repo-item">';
+                    html += '<div class="repo-name">' + repo.name + '</div>';
+                    html += '<div class="repo-desc">' + (repo.description || 'No description') + '</div>';
+                    html += '<div class="repo-info">Stars: ' + repo.stars + ' | Forks: ' + repo.forks + ' | Language: ' + (repo.language || 'N/A') + '</div>';
+                    html += '<div class="repo-info">Created: ' + new Date(repo.created_at).toLocaleDateString() + ' | Updated: ' + new Date(repo.updated_at).toLocaleDateString() + '</div>';
+                    html += '<a href="' + repo.url + '" target="_blank" class="repo-link">View on GitHub</a>';
+                    html += '</div>';
+                    html += '</div>';
+                    document.getElementById('output2').innerHTML = html;
+                })
+                .catch(function(error) {
+                    document.getElementById('loading2').style.display = 'none';
+                    document.getElementById('output2').innerHTML = '<div class="output error">Error: ' + error.message + '</div>';
+                });
+        });
+    </script>
+</body>
+</html>
