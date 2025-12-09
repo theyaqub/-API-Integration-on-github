@@ -151,11 +151,15 @@ http://localhost:3002/api/repos/torvalds/linux
 }
 ```
 ## ScreenShots
-1. **with postman**
-<img width="960" height="536" alt="image" src="https://github.com/user-attachments/assets/b50d3bd7-3ab6-4956-9cc4-4b0d46a04e20" /><img width="960" height="536" alt="image" src="https://github.com/user-attachments/assets/d0ec588c-c4b9-4235-8f99-f98004313771" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b50d3bd7-3ab6-4956-9cc4-4b0d46a04e20" width="400" />
+  <img src="https://github.com/user-attachments/assets/d0ec588c-c4b9-4235-8f99-f98004313771" width="400" />
+</p>
 
-2. **using index.html(<form> tag)**
-<img width="960" height="536" alt="image" src="https://github.com/user-attachments/assets/4ec2fa51-7a82-4111-a775-1ea343c26aa6" /><img width="960" height="536" alt="image" src="https://github.com/user-attachments/assets/63fa3992-98be-4b83-a661-de454886b611" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/4ec2fa51-7a82-4111-a775-1ea343c26aa6" width="400" />
+  <img src="https://github.com/user-attachments/assets/63fa3992-98be-4b83-a661-de454886b611" width="400" />
+</p>
 
 
 
