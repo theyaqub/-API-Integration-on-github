@@ -150,6 +150,16 @@ http://localhost:3002/api/repos/torvalds/linux
   "updated_at": "2024-01-15T10:30:00Z"
 }
 ```
+## ScreenShots
+1. **with postman
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/b50d3bd7-3ab6-4956-9cc4-4b0d46a04e20" />
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/8635dc70-b796-49d0-8bfe-a0ef8f6487cc" />
+2. **using index.html(<form> tag)
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/4ec2fa51-7a82-4111-a775-1ea343c26aa6" />
+<img width="1873" height="861" alt="image" src="https://github.com/user-attachments/assets/63fa3992-98be-4b83-a661-de454886b611" />
+
+
+
 
 ## External APIs Used
 
